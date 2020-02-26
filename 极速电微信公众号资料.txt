@@ -1,0 +1,36 @@
+
+主题色：#3367D6
+域名： https://adm.goshare-jsd.com/
+正式域名: https://adm.goshare-jsd.com/
+原来的vant版本: "^1.4.8",
+测试员账号：13350022325
+设备编号：18822
+
+空白页
+http://localhost:8888/wx/write
+
+登录
+http://localhost:8888/wx/login
+
+个人中心
+http://localhost:8888/wx/home/tab/info
+
+设备详情
+http://localhost:8888/wx/info/equipmentDetail
+
+
+第一个二维码编号：JSD0000001
+第二个二维码编号：JSD0000002
+
+
+
+
+
+
+
+
+
+
+
+
+
