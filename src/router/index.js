@@ -55,21 +55,9 @@ router.beforeEach((to, from, next) => {
   }
   if(userType === 1){
     // 测试模块
-    const { openId } = urlParse(document.URL)
-    console.log("openId-----",openId);
-    // todo：
-    if (openId) {
-      // 直接去空白页
-      next({
-        name: 'write',
-        params: {openId}
-      })
-      // store.commit('SET_TOKEN', Authorization)
-    }
-    // todo:
-    // store.commit('SET_TOKEN', 'eyJMaXVKaWVCYW5nIjoiSnd0VXRpbCIsImFsZyI6IkhTNTEyIn0.eyJtYW5hZ2VySWQiOiJNQU4wMDAwMDAwMDAwMDIiLCJpc3MiOiJyZXN0YXBpYXV0aHRpY2F0aW9uIiwiYXVkIjoiMjM4OXJmanNrZGZoMjM4aHNqZmhzams4MjM0ZXVmaHNnZGZnajgzaCIsImV4cCI6MTU4MDQ2MTA4NSwibmJmIjoxNTgwMjAxODg1fQ.dVJB0HmCQa7tzt4-zYzTgWcREm_CXafbhtlld8nC-bQ3MhL3wht42-3v9pPjV1Y3CnNwSO6rnwdsQWHK9Qp9fA')
     const { user } = store.state
     const { token, userInfo } = user
+    wxsdk && updateUrl(to.fullPath)
     if (!token) {
       if (requiredUserInfo) {
         Toast('请从公众号先登录')
@@ -113,9 +101,6 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       if (!token) {
-        // this.$router.replace({
-        //   name: 'withdrawLogin'
-        // })
         next({
           name: 'withdrawLogin',
         })
@@ -141,13 +126,14 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  const { wxsdk } = to.meta
-  if (wxsdk) {
-    updateUrl().then(() => {
-      initWxConfig()
-    })
-  } else {
-    updateUrl()
-  }
+  to.meta.wxsdk && updateUrl(to.fullPath)
+  //const { wxsdk } = to.meta
+  //if (wxsdk) {
+  //  updateUrl().then(() => {
+  //    initWxConfig()
+  //  })
+  //} else {
+  //  updateUrl()
+  //}
 })
 export default router

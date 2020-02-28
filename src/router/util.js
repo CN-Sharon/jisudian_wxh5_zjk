@@ -35,10 +35,9 @@ export function hasChild (item) {
 function getWxjssdk () {
   return new Promise((resolve, reject) => {
     // todo:sdk
-    let url = store.state.app.sdkUrl.split('https://smart.cloudjoin.cn')[1]
+    console.log(1111,store.state.app.sdkUrl)
     getJSSDK({
-      url,
-      // url: store.state.app.sdkUrl
+      url: store.state.app.sdkUrl
     }).then(res => {
       console.log("res===",res);
       resolve(res.data.data)
@@ -83,27 +82,22 @@ export function initWxConfig({
   })
 }
 
+
 // 更新url
-export function updateUrl () {
-  return new Promise((resolve, reject) => {
-    // 每次路由更新后初始化js-sdk 请求使用的url
-    // const system = store.state.app.system
-    // // 如果是安卓用户，每次存最新的
-    // if (system) {
-    //     store.dispatch('set_sdk_url', document.URL)
-    // } else {
+export function updateUrl (url) {
+     // 每次路由更新后初始化js-sdk 请求使用的url
+    const system = store.state.app.system
+    let host = `${window.location.protocol}//${document.domain}/wx${url}`
+    // 如果是安卓用户，每次存最新的
+    if (system == 1) {
+      store.dispatch('set_sdk_url', host)
+    } else {
       // ios进入 先判断是否存在，存在不操作，不存在再存入，因为ios只取第一次进入公众号的url，刷新页面相当于重新进入
       const sdkUrl = store.state.app.sdkUrl
       if (!sdkUrl) {
-        store.dispatch('set_sdk_url', document.URL)
+        store.dispatch('set_sdk_url', host)
       }
-    // }
-    setTimeout(() => {
-      resolve()
-    }, 600)
-
-  })
-
+    }
 }
 // 获取用户信息
 export async function getUserInfo () {

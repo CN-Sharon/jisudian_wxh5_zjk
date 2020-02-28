@@ -1,8 +1,6 @@
 
 import config from '@/config';
-import {
-  getJSSDK
-} from '@/api'
+import { getJSSDK } from '@/http/api/index'
 export default {
   methods: {
     // 获取微信js-sdk 参数
@@ -17,14 +15,14 @@ export default {
     },
     // 初始化微信js-sdk
     initWxConfig({
-      debug = false,
+      debug = true,
       ready = () => {}, // 初始化成功回调
       error = () => {}  // 初始化失败回调
     } = {}) {
-      this.$toast.loading({
-        mask: true,
-        message: '加载中...'
-      });
+      // this.$toast.loading({
+      //   mask: true,
+      //   message: '加载中...'
+      // });
       this.getSign().then(sdk => {
         this.$wx.config({
           debug,
@@ -35,7 +33,7 @@ export default {
             'pauseVoice', 'stopVoice', 'onVoicePlayEnd', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage',
             'uploadImage', 'downloadImage', 'translateVoice', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu',
             'showOptionMenu', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'closeWindow',
-            'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'     
+            'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'
           ]
         })
         this.$wx.ready(() => {
@@ -43,6 +41,7 @@ export default {
           ready && ready()
         })
         this.$wx.error(err => {
+          console.log("wx.error==111====",err);
           this.$toast.clear()
           error && error(err)
         })

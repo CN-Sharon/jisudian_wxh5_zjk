@@ -40,12 +40,9 @@ module.exports = {
     host: '0.0.0.0',
     https: false,
     open: true, //配置自动启动浏览器
-    // proxy: 'http://localhost:4000'
     proxy: {
       '/api': {
-        // target: 'http://192.168.1.53:9148',
-        // target: 'http://192.168.1.118:9148',
-        target: 'https://adm.goshare-jsd.com/',
+        target: 'https://smart.cloudjoin.cn/',
         ws: true,
         changeOrigin: true,
         pathRewrite:{

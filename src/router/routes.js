@@ -32,8 +32,8 @@ export default [
   // ** 以下是【测试】模块
   // 登录页面
   {
-    path: '/login',
-    name: 'login',
+    path: '/test-login',
+    name: 'testLogin',
     component: _import('login/index'),
     meta: {
       userType: 1,
@@ -41,9 +41,9 @@ export default [
   },
   // 空白页面
   {
-    path: '/write',
-    name: 'write',
-    component: _import('write/index'),
+    path: '/white',
+    name: 'white',
+    component: _import('white/index'),
     meta: {
       userType: 1,
     }

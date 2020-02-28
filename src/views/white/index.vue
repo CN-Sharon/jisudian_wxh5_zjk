@@ -7,6 +7,7 @@
 
 <script>
 import { testerLogin } from "@/http/api/test";
+import { urlParse } from '@/utils'
 export default {
   data() {
     return {
@@ -25,7 +26,7 @@ export default {
           })
         }else{
           this.$router.replace({
-            name: 'login',
+            name: 'testLogin',
             params: {
               openId: this.openId
             }
@@ -35,7 +36,8 @@ export default {
     }
   },
   created() {
-    this.openId = this.$route.params.openId
+    const { openId } = urlParse(document.URL)
+    this.openId = openId
     this.testerLogin()
   }
 };

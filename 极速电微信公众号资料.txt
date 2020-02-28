@@ -1,16 +1,17 @@
 
 主题色：#3367D6
-域名： https://adm.goshare-jsd.com/
-正式域名: https://adm.goshare-jsd.com/
+域名： https://smart.cloudjoin.cn/
+正式域名: https://smart.cloudjoin.cn/
 原来的vant版本: "^1.4.8",
 测试员账号：13350022325
 设备编号：18822
 
+【测试端】
 空白页
-http://localhost:8888/wx/write
+http://localhost:8888/wx/white
 
 登录
-http://localhost:8888/wx/login
+http://localhost:8888/wx/test-login
 
 个人中心
 http://localhost:8888/wx/home/tab/info
@@ -21,6 +22,13 @@ http://localhost:8888/wx/info/equipmentDetail
 
 第一个二维码编号：JSD0000001
 第二个二维码编号：JSD0000002
+
+
+
+
+【提现】（页面都在withdraw文件夹下）
+登录
+http://localhost:8888/wx/withdraw-login
 
 
 

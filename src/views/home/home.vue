@@ -43,6 +43,7 @@
 <script>
   import { urlParse }  from '@/utils'
   import VueBetterScroll from '@/components/better-scroll';
+  import initWxConfig from '@/mixins/getSign';
   export default {
     components: {
       VueBetterScroll
@@ -52,6 +53,13 @@
         bannerList: []
       }
     },
+    mixins: [initWxConfig],
+    mounted() {
+      // 调用初始化函数地图
+      this.$nextTick(() => {
+        this.initWxConfig();
+      })
+    },
     methods: {
       // 广告屏测试
       adBoxClick(){
@@ -59,12 +67,12 @@
       },
       // 扫一扫
       async scanQRCode(){
-        // todo:
-        this.$router.push({
-          name:'info-equipmentDetail',
-          params:{ equipmentNumber:'JSD0000002' }
-        })
-        return
+        // todo-eq:
+        // this.$router.push({
+        //   name:'info-equipmentDetail',
+        //   params:{ equipmentNumber:'JSD0000002' }
+        // })
+        // return
         this.$wx.scanQRCode({
           needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
@@ -82,10 +90,6 @@
         });
       },
     },
-    computed: {
-    },
-    created() {
-    }
   }
 </script>
 <style scoped lang='stylus'>
