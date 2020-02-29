@@ -38,7 +38,7 @@
             </div>
         </div>
       </van-sticky>
-      <div class="pd10-x mgb30">
+      <div class="pd10-x mgb30" v-if="show1">
         <main class="main bgw radius-8 pd10 c999 ft14">
 					<div
             v-for="(item,index) in eqList"
@@ -178,8 +178,8 @@
                 type:-1,
               }
             });
+            this.show1 = true;
           })
-          this.show1 = true;
           this.showLoading = false;
         }else{
           this.show1 = true;
