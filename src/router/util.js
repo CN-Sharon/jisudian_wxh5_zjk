@@ -46,7 +46,7 @@ function getWxjssdk () {
 }
 // 初始化微信js-sdk
 export function initWxConfig({
-    debug = true,
+    debug = false,
     ready = () => {}, // 初始化成功回调
     error = () => {}  // 初始化失败回调
   } = {}) {
@@ -56,7 +56,6 @@ export function initWxConfig({
     // });
     getWxjssdk().then(sdk => {
       console.log('sdk---',sdk);
-
       Vue.prototype.$wx.config({
         debug,
         ...sdk,

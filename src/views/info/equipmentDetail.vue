@@ -9,7 +9,7 @@
         <div class="pd10-x bgg">
             <!-- <p class="mg0 ft16 lh40 pd10-x">机柜信息</p> -->
             <div class="lh10 hei10"></div>
-            <main class="pr main bgw radius-8 pd10 c999 ft14 lh30">
+            <main class="pr main bgw radius-8 pd10 c999 ft14 lh24">
               <p class="mg0">机柜编号：{{equipmentNumber}}</p>
               <p class="mg0">
                 <span>
@@ -40,8 +40,8 @@
       </van-sticky>
       <div class="pd10-x mgb30">
         <main class="main bgw radius-8 pd10 c999 ft14">
-					<div 
-            v-for="(item,index) in eqList" 
+					<div
+            v-for="(item,index) in eqList"
             :key="index"
             :class="{'solidLine':index!==eqList.length-1}"
             class="ft12 flex-between pdb6">
@@ -112,6 +112,12 @@
         <van-col class="row row2" span="16">正在上电初始化或者无信号或者4G设备故障</van-col>
       </van-row>
     </van-popup>
+    <van-overlay :show="showLoading">
+    <!-- <van-overlay :show="showLoading" @click="onClickHide"> -->
+      <!-- <div class="overlay">
+        <van-loading :show="showLoading"  style="margin:0 auto;" color="#1989fa" :size="60"/>
+      </div> -->
+    </van-overlay>
   </div>
 </template>
 <script>
@@ -124,6 +130,7 @@
       return {
         show:false,
         show1:false,
+        showLoading:false,
         option1:[
           { text: '弹出充电宝', value: -1 },
           { text: '锁定输出', value: 0 },
@@ -135,7 +142,7 @@
       }
 		},
     created() {
-      // todo:
+      // todo--eq:
       // this.equipmentNumber = 'JSD0000001';
       this.equipmentNumber = this.$route.params.equipmentNumber;
       this.getDetail();
@@ -146,35 +153,44 @@
       }
     },
 		methods:{
+      onClickHide(){
+        this.showLoading = false;
+      },
       // 获取设备信息
       async getDetail(){
+        this.show1 = false;
         const { data } = await scanQR({equipmentNumber:this.equipmentNumber})
         if(data.code === 1){
+          this.$nextTick(() => {
+            this.notes = data.iotData;
+            this.eqList = data.iotData.batteryCheckDataList.map(item => {
+              let min = 36;
+              let max = 45;
+              let number = null;
+              if(item.state === 1){
+                number = Math.round((item.voltage - min)/(max - min)*10000)/100.00;
+              }else{
+                number = 0;
+              }
+              return {
+                ...item,
+                number,
+                type:-1,
+              }
+            });
+          })
           this.show1 = true;
-          console.log(data)
-          this.notes = data.iotData;
-          this.eqList = data.iotData.batteryCheckDataList.map(item => {
-            let min = 36;
-            let max = 45;
-            let number = null;
-            if(item.state === 1){
-              number = Math.round((item.voltage - min)/(max - min)*10000)/100.00;
-            }else{
-              number = 0;
-            }
-            return {
-              ...item,
-              number,
-              type:-1,
-            }
-          });
+          this.showLoading = false;
         }else{
+          this.show1 = true;
+          this.showLoading = false;
           this.$router.go(-1)
         }
       },
       // 弹出
       async onPopOne(type,index){
         if(type === -1) return;
+        this.showLoading = true;
         const params = {
           type,
           equipmentNumber:this.equipmentNumber,
@@ -183,20 +199,30 @@
         const { data } = await popOne(params)
         if(data.code === 1){
           console.log(data)
+          this.showLoading = false;
           if(data.iotData.status === 0){
             this.$toast('弹出失败！')
           }else{
             this.$toast('弹出成功！')
+            setTimeout(() => {
+              this.getDetail();
+            },2000);
           }
+        }else{
+          this.showLoading = false;
         }
       },
       // 一键弹出
       async onPopAll(){
+        this.showLoading = true;
         const params = {
           equipmentNumber:this.equipmentNumber
         }
         const { data } = await popAll(params)
         if(data.code === 1){
+          setTimeout(() => {
+            this.getDetail();
+          },2000);
           if(data.data.fail.length){
             let num = data.data.fail.join(',').replace(/,$/gi,"")
             this.$toast(`以下仓位弹出失败:${num}`)
@@ -206,6 +232,10 @@
           //   this.$toast(`成功弹出仓位:${num}`)
           // }
           console.log(data.data)
+        }else{
+          setTimeout(() => {
+            this.getDetail();
+          },2000);
         }
       },
       // 刷新
@@ -223,20 +253,15 @@
         }
       },
 		},
-    // beforeDestroy () {
-    //   if (this.ws)  {
-    //     this.ws.disconnect()
-    //   }
-    // },
-    // detached () {
-    //   if (this.ws)  {
-    //     this.ws.disconnect()
-    //   }
-    // }
   }
 </script>
 
 <style scoped lang='stylus'>
+.overlay
+  width 100vw
+  height 100vh
+  line-height 100vh
+  text-align center
 p
   color #000
 .container

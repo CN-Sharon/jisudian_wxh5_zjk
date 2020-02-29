@@ -46,6 +46,7 @@ export default [
     component: _import('white/index'),
     meta: {
       userType: 1,
+      wxsdk:true,
     }
   },
   // 首页

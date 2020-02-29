@@ -58,6 +58,7 @@ router.beforeEach((to, from, next) => {
     const { user } = store.state
     const { token, userInfo } = user
     wxsdk && updateUrl(to.fullPath)
+
     if (!token) {
       if (requiredUserInfo) {
         Toast('请从公众号先登录')

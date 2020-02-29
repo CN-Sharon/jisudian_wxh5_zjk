@@ -15,7 +15,7 @@ export default {
     },
     // 初始化微信js-sdk
     initWxConfig({
-      debug = true,
+      debug = false,
       ready = () => {}, // 初始化成功回调
       error = () => {}  // 初始化失败回调
     } = {}) {

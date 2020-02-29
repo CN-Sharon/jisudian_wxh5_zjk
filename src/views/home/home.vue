@@ -50,7 +50,7 @@
     },
     data() {
       return {
-        bannerList: []
+        bannerList: [],
       }
     },
     mixins: [initWxConfig],
