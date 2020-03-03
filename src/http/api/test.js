@@ -45,6 +45,22 @@ export function scanQR (data) {
     data
   })
 }
+// 模拟用户扫一扫
+export function simulateUseScanQR (data) {
+  return request({
+    url: `${defaultPath}/api/iotDevice/admin/simulateUseScanQR`,
+    method: 'post',
+    data
+  })
+}
+// 模拟用户借宝
+export function simulateUserHandle (data) {
+  return request({
+    url: `${defaultPath}/api/iotDevice/admin/simulateUserHandle`,
+    method: 'post',
+    data
+  })
+}
 // 根据槽口弹充电宝
 export function popOne (data) {
   return request({

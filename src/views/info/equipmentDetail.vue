@@ -28,61 +28,40 @@
             <div class="mg4-y ft16 lh40 pd10-x flex-between">
               <span>槽口</span>
               <div class="flex">
-                <!-- <van-dropdown-menu active-color="#17AADB" overlay="false" @change="onPopAll">
-                  <van-dropdown-item v-model="value1" :options="option1" />
-                </van-dropdown-menu> -->
-                <img @click="onPopAll" class="wid120" src="@/assets/btn_pop@2x.png" alt="">
-                <!-- <img @click="onPopAll" class="wid100" src="@/assets/btn_popp@2x.png" alt=""> -->
-                <img @click="onRefresh" class="wid20 mgl20" src="@/assets/ic_refresh@2x.png" alt="">
+                <div @click="onPopAll" class="cfff btn-all ft14 pdl30 pdr14 hei24 lh24 radius4 mg10">一键弹起</div>
+                <div @click="onRefresh" class="cfff btn-refresh ft14 pdl30 pdr14 hei24 lh24 radius4">刷新</div>
               </div>
             </div>
         </div>
       </van-sticky>
       <div class="pd10-x mgb30" v-if="show1">
-        <main class="main bgw radius-8 pd10 c999 ft14">
-					<div
+        <main>
+          <div
             v-for="(item,index) in eqList"
             :key="index"
-            :class="{'solidLine':index!==eqList.length-1}"
-            class="ft12 flex-between pdb6">
-            <div class="flex">
-              <span class="dlc-primary pdr8 wid20">{{item.index}}</span>
-              <van-slider
-                v-model="item.number"
-                bar-height="16px"
-                active-color="#CCF2FF"
-                disabled
-              >
-                <div
-                  slot="button"
-                  class="custom-button ft12"
-                >
-                  {{ item.number }}%
+            class="o-box flex-between bfff radius-8 mgb10 pdr10">
+            <div class="dlc-primary wid40 ta">{{item.index}}</div>
+            <div class="wid300 pdl10 line-index">
+              <div v-if="item.state === 0" class="hei40">
+                <div class="cfff btn2 ft14 pd14-x hei20 lh20 radius20 mg4-x mg10-y fr">空仓</div>
+              </div>
+              <div v-if="item.state !== 0" class="flex-between">
+                <div class="flex">
+                  <div class="wid100">SN: {{item.batterySn}}</div>
+                  <div class="mgl20">电量: <span :class="{'dlc-danger':item.electric<40}">{{item.electric}}%</span></div>
                 </div>
-              </van-slider>
-              <div class="pd16-x">
-                <p class="mg0 pd4-y">
-                  <span><i class="dlc-bg-success wid6 hei6 l-block radius mgr4 mgb2"></i>SN:{{item.batterySn}}</span>
-                </p>
-                <p class="mg0 pd4-y">
-                  <span class="pdr8"><i class="dlc-bg-warning wid6 hei6 l-block radius mgr4 mgb2"></i>电压:{{item.voltage}}V</span>
-                </p>
-                <p class="mg0 pd4-y">
-                  <span><i class="dlc-bg-danger wid6 hei6 l-block radius mgr4 mgb2"></i>温度:{{item.temp}}°C</span>
-                </p>
+                <div class="cfff btn1 dlc-bg-main btn4 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(1,item)">开启输出</div>
+              </div>
+              <div v-if="item.state !== 0" class="flex-between">
+                <div class="flex">
+                  <div class="wid100">电压: {{item.voltage}}V</div>
+                  <div class="mgl20">温度: {{item.temp}}°C</div>
+                </div>
+                <div class="cfff btn1 dlc-bg-warning btn3 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(0,item)">锁定输出</div>
               </div>
             </div>
-            <div>
-              <!-- <van-dropdown-menu direction="up" active-color="#17AADB">
-                <van-dropdown-item v-model="item.type" :options="option1"  @change="onPopOne(item)"/>
-              </van-dropdown-menu> -->
-              <div v-if="item.state === 0" class="cfff btn2 ft14 pd14-x hei20 lh20 radius20 mg10">空仓</div>
-              <div v-if="item.state !== 0" class="cfff btn1 dlc-bg-warning btn3 ft14 pd14-x hei20 lh20 radius20 mg10" @click="onPopOne(0,item.index)">锁定输出</div>
-              <div v-if="item.state !== 0" class="cfff btn1 dlc-bg-main btn4 ft14 pd14-x hei20 lh20 radius20 mg10" @click="onPopOne(1,item.index)">开启输出</div>
-              <!-- <div class="cfff dlc-bg-main ft14 pxd14-x hei20 lh20 radius20 mgt10" @click="onPopOne(1,item.index)">开启输出</div> -->
-            </div>
-					</div>
-				</main>
+          </div>
+        </main>
       </div>
     </template>
     <!-- 信号信息框 -->
@@ -130,7 +109,7 @@
       return {
         show:false,
         show1:false,
-        showLoading:false,
+        showLoading:true,
         option1:[
           { text: '弹出充电宝', value: -1 },
           { text: '锁定输出', value: 0 },
@@ -163,50 +142,39 @@
         if(data.code === 1){
           this.$nextTick(() => {
             this.notes = data.iotData;
-            this.eqList = data.iotData.batteryCheckDataList.map(item => {
-              let min = 36;
-              let max = 45;
-              let number = null;
-              if(item.state === 1){
-                number = Math.round((item.voltage - min)/(max - min)*10000)/100.00;
-              }else{
-                number = 0;
-              }
-              return {
-                ...item,
-                number,
-                type:-1,
-              }
-            });
+            this.eqList = data.iotData.batteryCheckDataList;
             this.show1 = true;
           })
           this.showLoading = false;
         }else{
           this.show1 = true;
           this.showLoading = false;
-          this.$router.go(-1)
+          this.$toast(data.msg);
+          setTimeout(() => {
+            this.$router.go(-1)
+          },1200)
         }
       },
       // 弹出
-      async onPopOne(type,index){
+      async onPopOne(type,item){
         if(type === -1) return;
         this.showLoading = true;
         const params = {
           type,
           equipmentNumber:this.equipmentNumber,
-          param:index,
+          param:item.index,
         }
         const { data } = await popOne(params)
         if(data.code === 1){
-          console.log(data)
           this.showLoading = false;
           if(data.iotData.status === 0){
             this.$toast('弹出失败！')
           }else{
             this.$toast('弹出成功！')
-            setTimeout(() => {
-              this.getDetail();
-            },2000);
+            this.$nextTick(()=>{
+              let ind = item.index-1
+              this.$set(this.eqList[ind],'state',0);
+            })
           }
         }else{
           this.showLoading = false;
@@ -220,22 +188,22 @@
         }
         const { data } = await popAll(params)
         if(data.code === 1){
-          setTimeout(() => {
-            this.getDetail();
-          },2000);
-          if(data.data.fail.length){
-            let num = data.data.fail.join(',').replace(/,$/gi,"")
-            this.$toast(`以下仓位弹出失败:${num}`)
+          this.showLoading = false;
+          if(data.data.fail){
+            // let num = data.data.fail.join(',').replace(/,$/gi,"")
+            this.$toast(`以下仓位弹出失败:${data.data.fail}`)
           }
-          // else if(data.data.success.length){
-          //   let num = data.data.success.join(',').replace(/,$/gi,"")
-          //   this.$toast(`成功弹出仓位:${num}`)
-          // }
-          console.log(data.data)
+          if(data.data.success){
+            let arr = data.data.success.split(',');
+            // let num = data.data.success.join(',').replace(/,$/gi,"")
+            // this.$toast(`成功弹出仓位:${num}`)
+            arr.map((item)=>{
+              let ind = item - 1
+              this.$set(this.eqList[ind],'state',0);
+            });
+          }
         }else{
-          setTimeout(() => {
-            this.getDetail();
-          },2000);
+          this.showLoading = false;
         }
       },
       // 刷新
@@ -257,6 +225,9 @@
 </script>
 
 <style scoped lang='stylus'>
+.line-index
+  // border-right 1px solid #41BFE8
+  border-left 2px solid #99d2e4
 .overlay
   width 100vw
   height 100vh
@@ -280,7 +251,20 @@ p
   color #fff
   background #999
   font-weight normal
-
+.btn-all
+  // width 96px
+  text-align center
+  color #fff
+  background #41BFE8 url('~@/assets/btn12.png') no-repeat 6px
+  background-size 20px
+  font-weight normal
+.btn-refresh
+  // width 36px
+  text-align center
+  color #fff
+  background #41BFE8 url('~@/assets/btn11.png') no-repeat 6px
+  background-size 16px
+  font-weight normal
 .dlc-btn-primary
   width 140px
 .btn-link

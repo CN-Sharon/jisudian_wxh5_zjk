@@ -107,6 +107,15 @@ export default [
           userType: 1
         }
       },
+      {//设备详情(模拟测试)
+        path: 'equipmentDetailTest',
+        name: 'info-equipmentDetail-test',
+        component: _import('info/equipmentDetailTest'),
+        meta: {
+          title: '设备详情',
+          userType: 1
+        }
+      },
     ]
   },
   // ** 以下是【提现】模块

@@ -21,7 +21,7 @@
         <van-col span="12">
           <div class="pd20 bfff text-center radius-4" @click="scanQRCode">
             <div class="hei50">
-              <img class="wid50" src="@/assets/ic_scan@2x.png" alt="">
+              <img class="wid50" src="@/assets/btn15.png" alt="">
             </div>
             <p class="ft20 mg6-y">扫码测试</p>
             <p class="ft12 c999 lh24 mg0">（扫码测试基本信息、弹宝等）</p>
@@ -30,11 +30,24 @@
         <van-col span="12">
           <div class="pd20 bfff text-center radius-4" @click="adBoxClick">
             <div class="hei50">
-              <img class="wid60" src="@/assets/ic_pic@2x.png" alt="">
+              <img class="wid60" src="@/assets/btn16.png" alt="">
             </div>
             <p class="ft20 mg6-y">广告屏测试</p>
             <p class="ft12 c999 lh24 mg0">（测试广告屏等，敬请期待...）</p>
           </div>
+        </van-col>
+      </van-row>
+      <van-row :gutter="10" type="flex" justify="center" class="mgt10">
+        <van-col span="12">
+          <div class="pd20 bfff text-center radius-4" @click="scanQRCodeTest">
+            <div class="hei50">
+              <img class="wid60" src="@/assets/btn14.png" alt="">
+            </div>
+            <p class="ft20 mg6-y">模拟测试</p>
+            <p class="ft12 c999 lh24 mg0">（模拟用户扫码测试）</p>
+          </div>
+        </van-col>
+        <van-col span="12">
         </van-col>
       </van-row>
     </vue-better-scroll>
@@ -70,7 +83,7 @@
         // todo-eq:
         // this.$router.push({
         //   name:'info-equipmentDetail',
-        //   params:{ equipmentNumber:'JSD0000002' }
+        //   params:{ equipmentNumber:'JSD0000001' }
         // })
         // return
         this.$wx.scanQRCode({
@@ -81,6 +94,30 @@
             let equipmentNumber = result.split("?")[1].split("=")[1];
             this.$router.push({
               name:'info-equipmentDetail',
+              params:{ equipmentNumber }
+            })
+          },
+          error:function(error){
+            console.log("scanQRCode error----",error);
+          }
+        });
+      },
+      // 扫一扫（模拟测试）
+      async scanQRCodeTest(){
+        // todo-eq:
+        // this.$router.push({
+        //   name:'info-equipmentDetail-test',
+        //   params:{ equipmentNumber:'JSD0000001' }
+        // })
+        // return
+        this.$wx.scanQRCode({
+          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: async res => {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+            let equipmentNumber = result.split("?")[1].split("=")[1];
+            this.$router.push({
+              name:'info-equipmentDetail-test',
               params:{ equipmentNumber }
             })
           },
