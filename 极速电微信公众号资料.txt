@@ -30,7 +30,7 @@ http://localhost:8888/wx/info/equipmentDetail
 登录
 http://localhost:8888/wx/withdraw-login
 
-
+生产测试配置的进入页面是/wx/write,在write页面,前端给到后台页面路径（），后台做重定向，会跳转到write页面，并且带着openId，前端拿到openId去调testerLogin接口，如果返回token则直接进入公众号，反之则进行验证手机号。
 
 
 
