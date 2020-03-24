@@ -1,7 +1,5 @@
 
 主题色：#3367D6
-域名： https://smart.cloudjoin.cn/
-正式域名: https://smart.cloudjoin.cn/
 原来的vant版本: "^1.4.8",
 测试员账号：13350022325
 设备编号：18822

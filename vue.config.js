@@ -42,7 +42,7 @@ module.exports = {
     open: true, //配置自动启动浏览器
     proxy: {
       '/api': {
-        target: 'https://smart.cloudjoin.cn/',
+        target: 'https://adm.goshare-jsd.com/',
         ws: true,
         changeOrigin: true,
         pathRewrite:{
