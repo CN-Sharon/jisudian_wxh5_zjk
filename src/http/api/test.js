@@ -93,3 +93,11 @@ export function getCustomerPhone (params) {
     params
   })
 }
+// 重新绑定
+export function bindSn (params) {
+  return request({
+    url: `${defaultPath}/api/weChat/bindSn`,
+    method: 'get',
+    params
+  })
+}

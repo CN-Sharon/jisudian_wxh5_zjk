@@ -51,12 +51,14 @@ router.beforeEach((to, from, next) => {
     }
     dynamicStore = testStore
     store.registerModule('user', dynamicStore)
-
   }
+  console.log("22--userType---",userType)
   if(userType === 1){
     // 测试模块
     const { user } = store.state
     const { token, userInfo } = user
+    console.log("22--wxsdk---",wxsdk)
+    console.log("22--wxsdk---",to.fullPath)
     wxsdk && updateUrl(to.fullPath)
 
     if (!token) {
@@ -127,6 +129,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
+  console.log("after router !!!---",to.fullPath)
   to.meta.wxsdk && updateUrl(to.fullPath)
   //const { wxsdk } = to.meta
   //if (wxsdk) {

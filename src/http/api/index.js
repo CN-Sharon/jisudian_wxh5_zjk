@@ -11,25 +11,3 @@ export function getJSSDK (data) {
     data
   })
 }
-
-// export function send (params) {
-//   return request({
-//     url: '/api/sms/send',
-//     params
-//   })
-// }
-
-// // 获取多个系统参数
-// export function getSystemparameterList () {
-//   return request({
-//     url: '/api/sys-systemparameter/getSystemparameterList',
-//   })
-// }
-
-// // 获取单个系统参数
-// export function getSystemparameter (params) {
-//   return request({
-//     url: '/api/sys-systemparameter/getSystemparameter',
-//     params
-//   })
-// }

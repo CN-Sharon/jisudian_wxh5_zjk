@@ -30,6 +30,7 @@
               <div class="flex">
                 <div @click="onPopAll" class="cfff btn-all ft14 pdl30 pdr14 hei24 lh24 radius4 mg10">一键弹起</div>
                 <div @click="onRefresh" class="cfff btn-refresh ft14 pdl30 pdr14 hei24 lh24 radius4">刷新</div>
+                <div @click="onBindSn" class="cfff btn-refresh ft14 pdl30 pdr14 hei24 lh24 radius4">重新绑定</div>
               </div>
             </div>
         </div>
@@ -100,7 +101,7 @@
   </div>
 </template>
 <script>
-  import { scanQR, popOne, popAll, rebootDevice } from '@/http/api/test'
+  import { scanQR, popOne, popAll, rebootDevice,bindSn } from '@/http/api/test'
   export default {
     components: {
     },
@@ -219,6 +220,33 @@
         if(data.code === 1){
           console.log(data.data)
         }
+      },
+      // 重新绑定
+      async onBindSn(){
+        this.$wx.scanQRCode({
+          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: async res => {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+            let deviceSn = result.split("?")[1].split("=")[1];
+            const { data } = await bindSn({
+              deviceName:this.notes.deviceName,
+              deviceSn,
+            })
+            if(data.code === 1){
+              this.$toast('重新绑定成功！')
+              console.log(data.data)
+            }
+          },
+          error:function(error){
+            console.log("scanQRCode error----",error);
+          }
+        });
+        const params = {
+          deviceName:this.notes.deviceName,
+          deviceSn:this.notes.deviceSn
+        }
+
       },
 		},
   }

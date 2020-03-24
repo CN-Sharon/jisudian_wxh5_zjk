@@ -13,6 +13,34 @@ const layout = _import('layout/index')
 
 export default [
   {
+    path: '',
+    beforeEnter(to, from, next){
+      console.log(111122222222233333333)
+      console.log(3333,to)
+      console.log(4444,from)
+      console.log(5555,next)
+      console.log(6666,`${window.location.protocol}//${document.domain}/wx${to.fullPath}`)
+      window.location.replace(`${window.location.protocol}//${document.domain}/wx${to.fullPath}`)
+  //         let host, route, token
+  //         try {
+  //           let t = document.URL.split('?')
+  //           host = t[0] + '#/'
+  //       let query = getQuery(t[1])
+  //       route = query['page'] + '/index'
+  //               token = query['token']
+  //               let index = token.indexOf('#')
+  //               if (index != -1) {
+  //                   token = token.substring(0, index)
+  //               }
+  //               console.log(`domain`, host + route + '?token=' + token)
+  //           window.location.replace(host + route + '?token=' + token)
+  //         } catch (error) {
+  //           console.log(error)
+  //           next('/home/index')
+  //         }
+     }
+    },
+  {
     path: '/',
     redirect: '/home',
   },
@@ -104,7 +132,8 @@ export default [
         component: _import('info/equipmentDetail'),
         meta: {
           title: '设备详情',
-          userType: 1
+          userType: 1,
+          wxsdk:true,
         }
       },
       {//设备详情(模拟测试)
