@@ -149,10 +149,12 @@
         }else{
           this.show1 = true;
           this.showLoading = false;
-          this.$toast(data.msg);
-          setTimeout(() => {
+          this.$dialog.alert({
+            title: '提示',
+            message: data.msg
+          }).then(() => {
             this.$router.go(-1)
-          },1200)
+          });
         }
       },
       // 弹出
