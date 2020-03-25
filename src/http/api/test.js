@@ -96,7 +96,7 @@ export function getCustomerPhone (params) {
 // 重新绑定
 export function bindSn (params) {
   return request({
-    url: `${defaultPath}/api/weChat/bindSn`,
+    url: `${defaultPath}/api/iotDevice/admin/bindSn`,
     method: 'get',
     params
   })

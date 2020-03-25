@@ -7,7 +7,6 @@
           <img class="wid80" src="@/assets/bg@2x.png" alt="">
         </div>
         <div class="pd10-x bgg">
-            <!-- <p class="mg0 ft16 lh40 pd10-x">机柜信息</p> -->
             <div class="lh10 hei10"></div>
             <main class="pr main bgw radius-8 pd10 c999 ft14 lh24">
               <p class="mg0">机柜编号：{{equipmentNumber}}</p>
@@ -24,13 +23,16 @@
                 <img class="wid40" src="@/assets/restart@2x.png" alt="">
                 <p class="p1 mg0 dlc-warning ft15 text-center" >重启</p>
               </div>
+              <div class="rebind" @click="onBindSn">
+                <img class="wid40 rebind-img" src="@/assets/scan.png" alt="">
+                <p class="p2 mg0 ft15 text-center">重新绑定</p>
+              </div>
             </main>
             <div class="mg4-y ft16 lh40 pd10-x flex-between">
               <span>槽口</span>
               <div class="flex">
                 <div @click="onPopAll" class="cfff btn-all ft14 pdl30 pdr14 hei24 lh24 radius4 mg10">一键弹起</div>
                 <div @click="onRefresh" class="cfff btn-refresh ft14 pdl30 pdr14 hei24 lh24 radius4">刷新</div>
-                <div @click="onBindSn" class="cfff btn-refresh ft14 pdl30 pdr14 hei24 lh24 radius4">重新绑定</div>
               </div>
             </div>
         </div>
@@ -228,13 +230,14 @@
           scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
           success: async res => {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-            let deviceSn = result.split("?")[1].split("=")[1];
+            let equipmentNumber = result.split("?")[1].split("=")[1];
             const { data } = await bindSn({
               deviceName:this.notes.deviceName,
-              deviceSn,
+              deviceSn:equipmentNumber,
             })
             if(data.code === 1){
               this.$toast('重新绑定成功！')
+              this.equipmentNumber = equipmentNumber;
               console.log(data.data)
             }
           },
@@ -242,11 +245,6 @@
             console.log("scanQRCode error----",error);
           }
         });
-        const params = {
-          deviceName:this.notes.deviceName,
-          deviceSn:this.notes.deviceSn
-        }
-
       },
 		},
   }
@@ -254,7 +252,6 @@
 
 <style scoped lang='stylus'>
 .line-index
-  // border-right 1px solid #41BFE8
   border-left 2px solid #99d2e4
 .overlay
   width 100vw
@@ -269,25 +266,20 @@ p
 .btn1
   width 60px
   text-align center
-  // border 1px solid #41bfe8
-  // color #41bfe8
   font-weight normal
 .btn2
   width 60px
   text-align center
-  // border 1px solid #999
   color #fff
   background #999
   font-weight normal
 .btn-all
-  // width 96px
   text-align center
   color #fff
   background #41BFE8 url('~@/assets/btn12.png') no-repeat 6px
   background-size 20px
   font-weight normal
 .btn-refresh
-  // width 36px
   text-align center
   color #fff
   background #41BFE8 url('~@/assets/btn11.png') no-repeat 6px
@@ -299,11 +291,6 @@ p
   width 250px
 .dlc-gray
   max-width 200px
-// .header
-//   height 300px
-//   background-image url('~@/assets/back.png')
-//   background-repeat no-repeat
-//   background-size contain
 .center
   width 140px
   height 140px
@@ -314,7 +301,16 @@ p
 .restart
 	position absolute
 	bottom 30px
-	right 20px
+	right 80px
+.rebind
+	position absolute
+	bottom 30px
+	right 10px
+.rebind-img
+  position relative
+  left 10px
+.p2
+  color #1597db
 .header
 	position relative
 	background #CCF2FF

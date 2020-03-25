@@ -60,7 +60,6 @@ router.beforeEach((to, from, next) => {
     console.log("22--wxsdk---",wxsdk)
     console.log("22--wxsdk---",to.fullPath)
     wxsdk && updateUrl(to.fullPath)
-
     if (!token) {
       if (requiredUserInfo) {
         Toast('请从公众号先登录')
