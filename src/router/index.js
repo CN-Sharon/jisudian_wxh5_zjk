@@ -60,6 +60,7 @@ router.beforeEach((to, from, next) => {
     if (!token) {
       if (requiredUserInfo) {
         Toast('请从公众号先登录')
+        // next()
       }
       next()
     } else {

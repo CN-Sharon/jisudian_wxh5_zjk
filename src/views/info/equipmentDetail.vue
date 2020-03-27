@@ -48,20 +48,20 @@
               <div v-if="item.state === 0" class="hei40">
                 <div class="cfff btn2 ft14 pd14-x hei20 lh20 radius20 mg6-x mg10-y fr">空仓</div>
               </div>
-              <div v-if="item.state !== 0" class="">
-                <div class="cfff btn1 dlc-bg-main ft14 pd14-x hei20 lh20 radius20 mg6-x mg10-y fr" @click="onPop">弹出</div>
+              <div v-if="item.state !== 0">
+                <div class="cfff btn1 dlc-bg-main ft14 pd14-x hei20 lh20 radius20 mg6-x mg10-y fr" @click="onPop(item)">弹出</div>
               </div>
               <div v-if="item.state !== 0">
                 <div class="flex">
-                  <div class="wid100">SN: {{item.batterySn}}</div>
-                  <div class="mgl20">电量: <span :class="{'dlc-danger':item.electric<40}">{{item.electric}}%</span></div>
+                  <div class="wid100 hei20">SN: {{item.batterySn}}</div>
+                  <div class="mgl20 hei20">电量: <span :class="{'dlc-danger':item.electric<40}">{{item.electric}}%</span></div>
                 </div>
                 <!-- <div class="cfff btn1 dlc-bg-main btn4 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(1,item)">开启输出</div> -->
               </div>
               <div v-if="item.state !== 0">
                 <div class="flex">
-                  <div class="wid100">电压: {{item.voltage}}V</div>
-                  <div class="mgl20">温度: {{item.temp}}°C</div>
+                  <div class="wid100 hei20">电压: {{item.voltage}}V</div>
+                  <div class="mgl20 hei20">温度: {{item.temp}}°C</div>
                 </div>
                 <!-- <div class="cfff btn1 dlc-bg-warning btn3 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(0,item)">锁定输出</div> -->
               </div>
@@ -126,6 +126,50 @@
           { name: '是', type: 1, },
           { name: '否', type: 0, },
         ],
+        // notes:{
+        //   "checkNum": "E5",  // 校验位
+        //   "data": [],
+        //   "deviceName": "865192044327749",   //设备iot名称
+        //   "hardVersion": 1,   //机柜硬件版本
+        //   "messageLength": 131,   // 消息长度
+        //   "messageType": 144,  // 消息类型
+        //   "requestHead": 169,  // 请求头
+        //   "signal": 24,   //  4G信号强度
+        //   "softVersion": 2, //机柜软件版本
+        //   "temp": 100,  //  机柜内温度
+        //   "undefined0": 0,  //
+        //   "undefined2": 0  //
+        // },
+        // eqList:[
+        //     {
+        //         "batterySn": 0,   // 充电宝SN序列号
+        //         "electric": 0,   //  充电宝剩余电量（电量百分比，十进制 0-100）
+        //         "electricCurrent": 0,   // 输出电流（暂时不用）
+        //         "hardVersion": 0,   // 充电宝硬件版本
+        //         "index": 1,   // 充电宝孔位索引
+        //         "softVersion": 0,   // 充电宝软件版本
+        //         "state": 0,   // 孔位状态    0.空仓  1.正常
+        //         "temp": 0,   // 电池温度（-15 ~ 50）
+        //         "undefined0": 0,   //
+        //         "undefined1": 0,   //
+        //         "undefined2": 0,   //
+        //         "voltage": 20   // 电池电压（例：38，实际上是实际电压的10倍，取值范围为（30~42），其他值表示电池异常）
+        //     },
+        //     {
+        //         "batterySn": 0,
+        //         "electric": 0,
+        //         "electricCurrent": 0,
+        //         "hardVersion": 0,
+        //         "index": 2,
+        //         "softVersion": 0,
+        //         "state": 1,
+        //         "temp": 0,
+        //         "undefined0": 0,
+        //         "undefined1": 0,
+        //         "undefined2": 0,
+        //         "voltage": 20
+        //     },
+        // ],
       }
 		},
     created() {
@@ -175,7 +219,6 @@
       },
       // 弹出
       async onPopOne(type){
-        if(type === -1) return;
         this.showLoading = true;
         const params = {
           type,
