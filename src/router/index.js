@@ -52,13 +52,10 @@ router.beforeEach((to, from, next) => {
     dynamicStore = testStore
     store.registerModule('user', dynamicStore)
   }
-  console.log("22--userType---",userType)
   if(userType === 1){
     // 测试模块
     const { user } = store.state
     const { token, userInfo } = user
-    console.log("22--wxsdk---",wxsdk)
-    console.log("22--wxsdk---",to.fullPath)
     wxsdk && updateUrl(to.fullPath)
     if (!token) {
       if (requiredUserInfo) {
