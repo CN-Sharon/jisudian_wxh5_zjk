@@ -42,25 +42,28 @@
           <div
             v-for="(item,index) in eqList"
             :key="index"
-            class="o-box flex-between bfff radius-8 mgb10 pdr10">
+            class="o-box flex-between bfff radius-8 mgb10 pd10-y">
             <div class="dlc-primary wid40 ta">{{item.index}}</div>
             <div class="wid300 pdl10 line-index">
               <div v-if="item.state === 0" class="hei40">
-                <div class="cfff btn2 ft14 pd14-x hei20 lh20 radius20 mg4-x mg10-y fr">空仓</div>
+                <div class="cfff btn2 ft14 pd14-x hei20 lh20 radius20 mg6-x mg10-y fr">空仓</div>
               </div>
-              <div v-if="item.state !== 0" class="flex-between">
+              <div v-if="item.state !== 0" class="">
+                <div class="cfff btn1 dlc-bg-main ft14 pd14-x hei20 lh20 radius20 mg6-x mg10-y fr" @click="onPop">弹出</div>
+              </div>
+              <div v-if="item.state !== 0">
                 <div class="flex">
                   <div class="wid100">SN: {{item.batterySn}}</div>
                   <div class="mgl20">电量: <span :class="{'dlc-danger':item.electric<40}">{{item.electric}}%</span></div>
                 </div>
-                <div class="cfff btn1 dlc-bg-main btn4 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(1,item)">开启输出</div>
+                <!-- <div class="cfff btn1 dlc-bg-main btn4 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(1,item)">开启输出</div> -->
               </div>
-              <div v-if="item.state !== 0" class="flex-between">
+              <div v-if="item.state !== 0">
                 <div class="flex">
                   <div class="wid100">电压: {{item.voltage}}V</div>
                   <div class="mgl20">温度: {{item.temp}}°C</div>
                 </div>
-                <div class="cfff btn1 dlc-bg-warning btn3 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(0,item)">锁定输出</div>
+                <!-- <div class="cfff btn1 dlc-bg-warning btn3 ft14 pd14-x hei20 lh20 radius20 wid60 mg4" @click="onPopOne(0,item)">锁定输出</div> -->
               </div>
             </div>
           </div>
@@ -100,6 +103,7 @@
         <van-loading :show="showLoading"  style="margin:0 auto;" color="#1989fa" :size="60"/>
       </div> -->
     </van-overlay>
+    <van-action-sheet v-model="show2" description="请选择是否开启输出" :actions="actions" @select="onSelect" />
   </div>
 </template>
 <script>
@@ -111,21 +115,22 @@
     data() {
       return {
         show:false,
-        show1:false,
+        show1:true,
+        show2: false,
         showLoading:true,
-        option1:[
-          { text: '弹出充电宝', value: -1 },
-          { text: '锁定输出', value: 0 },
-          { text: '开启输出', value: 1 },
-        ],
         equipmentNumber:'',
         notes:{},
         eqList:[],
+        currentRow:{},
+        actions: [
+          { name: '是', type: 1, },
+          { name: '否', type: 0, },
+        ],
       }
 		},
     created() {
       // todo--eq:
-      // this.equipmentNumber = 'JSD0000001';
+      // this.equipmentNumber = 'JSD0000002';
       this.equipmentNumber = this.$route.params.equipmentNumber;
       this.getDetail();
     },
@@ -135,6 +140,14 @@
       }
     },
 		methods:{
+      onPop(row){
+        this.show2 = true;
+        this.currentRow = row;
+      },
+      onSelect(item) {
+        this.show2 = false;
+        this.onPopOne(item.type)
+      },
       onClickHide(){
         this.showLoading = false;
       },
@@ -161,13 +174,13 @@
         }
       },
       // 弹出
-      async onPopOne(type,item){
+      async onPopOne(type){
         if(type === -1) return;
         this.showLoading = true;
         const params = {
           type,
           equipmentNumber:this.equipmentNumber,
-          param:item.index,
+          param:this.currentRow.index,
         }
         const { data } = await popOne(params)
         if(data.code === 1){
@@ -177,7 +190,7 @@
           }else{
             this.$toast('弹出成功！')
             this.$nextTick(()=>{
-              let ind = item.index-1
+              let ind = this.currentRow.index-1
               this.$set(this.eqList[ind],'state',0);
             })
           }
