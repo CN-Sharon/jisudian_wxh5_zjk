@@ -136,7 +136,11 @@
       // 获取设备信息
       async getDetail(){
         this.show1 = false;
-        const { data } = await simulateUseScanQR({equipmentNumber:this.equipmentNumber})
+        const params = {
+          managerId:this.userInfo.managerId,
+          equipmentNumber:this.equipmentNumber,
+        }
+        const { data } = await simulateUseScanQR(params)
         if(data.code === 1){
           this.$nextTick(() => {
             this.notes = data.iotData;
@@ -162,6 +166,7 @@
         if(type === -1) return;
         this.showLoading = true;
         const params = {
+          managerId:this.userInfo.managerId,
           equipmentNumber:this.equipmentNumber,
         }
         const { data } = await simulateUserHandle(params)

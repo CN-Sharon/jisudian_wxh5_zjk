@@ -15,10 +15,6 @@ export default [
   {
     path: '',
     beforeEnter(to, from, next){
-      console.log(111122222222233333333)
-      console.log(3333,to)
-      console.log(4444,from)
-      console.log(5555,next)
       console.log(6666,`${window.location.protocol}//${document.domain}/wx${to.fullPath}`)
       window.location.replace(`${window.location.protocol}//${document.domain}/wx${to.fullPath}`)
   //         let host, route, token
@@ -142,6 +138,17 @@ export default [
         component: _import('info/equipmentDetailTest'),
         meta: {
           title: '设备详情',
+          requiredUserInfo: true,
+          userType: 1
+        }
+      },
+      {//模拟测试记录
+        path: 'testReport',
+        name: 'info-test-report',
+        component: _import('info/testReport'),
+        meta: {
+          title: '测试记录',
+          requiredUserInfo: true,
           userType: 1
         }
       },
@@ -156,6 +163,7 @@ export default [
       title: '登录',
       white: true,
       userType: 2,
+      wxsdk:true,
     }
   },
   {
@@ -165,6 +173,7 @@ export default [
     meta: {
       title: '提现',
       userType: 2,
+      requiredUserInfo: true,
     }
   },
   {
@@ -174,6 +183,16 @@ export default [
     meta: {
       title: '修改密码',
       userType: 2,
+    }
+  },
+  {
+    path: '/equipmentList',
+    name: 'withdrawEquipmentList',
+    component: _import('withdraw/equipmentList'),
+    meta: {
+      title: '设备列表',
+      userType: 2,
+      wxsdk:true,
     }
   }
 ]

@@ -47,3 +47,20 @@ export function getUserInfo(params) {
     params
   })
 }
+
+// 设备列表
+export function listForDevice(params) {
+  return request({
+    url: `${defaultPath}/api/order-withdraw-detail/admin/listForDevice`,
+    params
+  })
+}
+
+// 设备扫一扫二维码绑定，注：只对managerLevel = 2 的角色显示
+export function updateForBind(params) {
+  return request({
+    url: `${defaultPath}/api/order-withdraw-detail/admin/updateForBind`,
+    method: 'put',
+    params
+  })
+}

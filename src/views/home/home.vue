@@ -48,6 +48,13 @@
           </div>
         </van-col>
         <van-col span="12">
+          <div class="pd20 bfff text-center radius-4" @click="testReport">
+            <div class="hei50">
+              <img class="wid60" src="@/assets/btn17.png" alt="">
+            </div>
+            <p class="ft20 mg6-y">测试记录</p>
+            <p class="ft12 c999 lh24 mg0">（模拟测试记录）</p>
+          </div>
         </van-col>
       </van-row>
     </vue-better-scroll>
@@ -126,6 +133,11 @@
           }
         });
       },
+      testReport(){
+        this.$router.push({
+          name:'info-test-report',
+        })
+      }
     },
   }
 </script>

@@ -101,3 +101,11 @@ export function bindSn (params) {
     params
   })
 }
+// 模拟测试记录
+export function testList (params) {
+  return request({
+    url: `${defaultPath}/api/iotDevice/admin/testList`,
+    method: 'get',
+    params
+  })
+}

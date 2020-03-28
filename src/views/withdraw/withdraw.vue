@@ -1,6 +1,13 @@
 <template>
   <div class="container bfff">
     <img
+      v-if="userInfo && userInfo.managerLevel === 2"
+      @click="equipment"
+      class="equipment wid30"
+      src="~@/assets/icon3.png"
+      alt=""
+    >
+    <img
       @click="forget"
       class="forget wid30"
       src="~@/assets/forget.png"
@@ -167,6 +174,11 @@ export default {
       duration: 3400
     });
   },
+  computed: {
+    userInfo () {
+      return this.$store.state.user.userInfo
+    }
+  },
   methods: {
     showTxt () {
       this.$dialog.alert({
@@ -180,6 +192,10 @@ export default {
       this.show = false
       this.number = ''
       this.getCashRequestBalance()
+    },
+    // 扫一扫
+    equipment () {
+      this.$router.push('equipmentList')
     },
     // 修改密码
     forget () {
@@ -366,6 +382,12 @@ export default {
   top: 20px;
 }
 
+.equipment{
+  position: absolute;
+  right: 90px;
+  top: 20px;
+}
+
 .icon {
   max-height: 24px;
   max-width: 24px;
@@ -378,7 +400,7 @@ export default {
 
 .forget {
   position: absolute;
-  right: 70px;
+  right: 50px;
   top: 20px;
 }
 </style>

@@ -6,7 +6,8 @@ import { Toast, CellGroup } from 'vant'
 import { urlParse } from '@/utils'
 import testStore from '@/store/modules/test'
 import withdrawStore from '@/store/modules/withdraw'
-import { updateUrl,initWxConfig} from "./util";
+import { updateUrl } from "./util";
+// import initWxConfig from "@/mixins/getSign";
 import { setToken } from '@/utils/auth'
 Vue.use(Router)
 const router = new Router({
@@ -28,9 +29,9 @@ const router = new Router({
   }
 })
 router.beforeEach((to, from, next) => {
-  // if (process.env.NODE_ENV == 'development') {
-  //   setToken('user', 'eyJMaXVKaWVCYW5nIjoiSnd0VXRpbCIsImFsZyI6IkhTNTEyIn0.eyJtYW5hZ2VySWQiOiJNQU4wMDAwMDAwMDAwMDIiLCJpc3MiOiJyZXN0YXBpYXV0aHRpY2F0aW9uIiwiYXVkIjoiMjM4OXJmanNrZGZoMjM4aHNqZmhzams4MjM0ZXVmaHNnZGZnajgzaCIsImV4cCI6MTU4MDQ2MTA4NSwibmJmIjoxNTgwMjAxODg1fQ.dVJB0HmCQa7tzt4-zYzTgWcREm_CXafbhtlld8nC-bQ3MhL3wht42-3v9pPjV1Y3CnNwSO6rnwdsQWHK9Qp9fA')
-  // }
+  if (process.env.NODE_ENV == 'development') {
+    setToken('user', 'eyJMaXVKaWVCYW5nIjoiSnd0VXRpbCIsImFsZyI6IkhTNTEyIn0.eyJtYW5hZ2VySWQiOiJNQU4xMDQwMDM4NzQzNDQ1NzAiLCJpc3MiOiJyZXN0YXBpYXV0aHRpY2F0aW9uIiwiYXVkIjoiMjM4OXJmanNrZGZoMjM4aHNqZmhzams4MjM0ZXVmaHNnZGZnajgzaCIsImV4cCI6MTU4NTY4NDIzMiwibmJmIjoxNTg1NDI1MDMyfQ.5eFYhAp7JcTP7Y-KSzi8Ea0IYg_nz3kY0NTcNmYHboNw0swxRaWO8dppxKVnugjNaO30-323LsAAe1yjMzqJpg')
+  }
   const { title,wxsdk,white } = to.meta
   if (title) {
     document.title = title
@@ -60,6 +61,7 @@ router.beforeEach((to, from, next) => {
     if (!token) {
       if (requiredUserInfo) {
         Toast('请从公众号先登录')
+        // todo:::
         // next()
       }
       next()
@@ -92,34 +94,44 @@ router.beforeEach((to, from, next) => {
     // 提现模块
     const { Authorization } = urlParse(document.URL)
     Authorization && store.commit('SET_TOKEN', Authorization)
+    const { user } = store.state
+    const { token, userInfo } = user
     wxsdk && updateUrl(to.fullPath)
-    const {
-      token
-    } = store.state.user
     // 白名单直接放行
     if (white) {
       next()
     } else {
-      if (!token) {
-        next({
-          name: 'withdrawLogin',
-        })
-        // todo:::
-        // window.location.replace(`${QUAH_RIDERECT_URL}${to.fullPath}`)
-        // next()
-      } else {
-        next()
-        // if (requiredUserInfo) {
-        //   try {
-        //     await getUserInfo()
-        //     next()
-        //   } catch (err) {
-        //     next({ name: 'error-500' })
-        //   }
-        // } else {
-        //   next()
-        // }
-      }
+      // if (!token) {
+      //   // todo:::
+      //   // next()
+      //   next({
+      //     name: 'withdrawLogin',
+      //   })
+      // } else {
+        if (requiredUserInfo) {
+          if (userInfo) {
+            next()
+          } else {
+            store.dispatch('getUserInfo').then(() => {
+              next()
+            }).catch(err => {
+              if (err && err.response && err.response.status == 500 || err.data && err.data.code == 500) {
+                if (name === 'error-500') {
+                    next()
+                } else {
+                    next({
+                      name: 'error-500'
+                    })
+                }
+              } else {
+                next()
+              }
+            })
+          }
+        }else {
+          next()
+        }
+      // }
     }
   }
 
@@ -128,13 +140,13 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   console.log("after router !!!---",to.fullPath)
   to.meta.wxsdk && updateUrl(to.fullPath)
-  //const { wxsdk } = to.meta
-  //if (wxsdk) {
+  // const { wxsdk } = to.meta
+  // if (wxsdk) {
   //  updateUrl().then(() => {
   //    initWxConfig()
   //  })
-  //} else {
-  //  updateUrl()
-  //}
+  // } else {
+  //  updateUrl(to.fullPath)
+  // }
 })
 export default router
