@@ -153,7 +153,7 @@
           success: async res => {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
             let equipmentNumber = result.split("?")[1].split("=")[1];
-            this.bindEquipment(equipmentNumber)
+            this.bindEquipment(equipmentNumber);
           },
           error:function(error){
             console.log("scanQRCode error----",error);
@@ -163,7 +163,10 @@
       async bindEquipment(equipmentNumber){
         const { data } = await updateForBind({equipmentNumber})
         if(data.code === 1){
-          this.$toast('操作成功')
+          this.$toast('操作成功');
+          // 刷新页面数据
+          this.equipmentNumber = equipmentNumber;
+          this.onRefresh()
         }
       }
 		},

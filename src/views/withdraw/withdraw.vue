@@ -2,19 +2,19 @@
   <div class="container bfff">
     <img
       v-if="userInfo && userInfo.managerLevel === 2"
-      @click="equipment"
+      @click="onEquipment"
       class="equipment wid30"
       src="~@/assets/icon3.png"
       alt=""
     >
     <img
-      @click="forget"
+      @click="onForget"
       class="forget wid30"
       src="~@/assets/forget.png"
       alt=""
     >
     <img
-      @click="logout"
+      @click="onLogout"
       class="logout wid30"
       src="~@/assets/logout.png"
       alt=""
@@ -91,7 +91,7 @@
         </div>
       </div>
       <button
-        @click="submit"
+        @click="onSubmit"
         class="btn cfff mgt30"
       >确认提现</button>
     </div>
@@ -125,26 +125,36 @@
         >
       </div>
     </div>
-    <!-- 确认是否提现-弹框 -->
-    <div
-      v-if="show1"
-      class="mask"
-    ></div>
-    <div
-      v-if="show1"
-      class="alert-box alert-box-1"
-    >
+    <!-- 提现之前输入验证码 -->
+    <div v-if="show2" class="mask"></div>
+    <div v-if="show2" class="alert-box alert-box-1">
       <div class="alert-main text-center bfff">
-        <div class="ft18 pd10-y">提示</div>
-        <div class="ft18 pd10-y">是否确定提现？</div>
+        <van-field label="手机" :value="userAccount" readonly />
+        <van-field
+          v-model="phoneCode"
+          center
+          clearable
+          label="验证码"
+          placeholder="请输入验证码"
+        >
+          <template #button>
+            <CutDown
+              class="btn_code"
+              :startVal="120"
+              ref="cut"
+              :disabled="disabled2"
+              @click="getCodeNum"
+            ></CutDown>
+          </template>
+        </van-field>
         <div class="flex-center mgt20">
           <button
-            :disabled="disabled"
-            @click="withdraw"
+            :disabled="disabled1"
+            @click="onWithdraw"
             class="btn-g btn-g-1"
           >确定</button>
           <button
-            @click="show1 = false"
+            @click="show2 = false"
             class="btn-g"
           >取消</button>
         </div>
@@ -154,20 +164,31 @@
 </template>
 
 <script>
-import { withdraw, getCashRequestBalance } from "@/http/api/withdraw";
+import { withdraw, getCashRequestBalance, getUserInfo } from "@/http/api/withdraw";
+import { sendSms } from "@/http/api/test";
+import CutDown from "@/components/CutDown";
+
 export default {
+  components: {
+    CutDown
+  },
   data () {
     return {
       money: 0,
       number: '',
       show: false,
-      show1: false,
+      show2: false,
       active: 1,
       bankId: '',
-      disabled: false
+      disabled: false,
+      disabled1: false,
+      disabled2: false,
+      phoneCode: '',
+      userAccount: ''
     };
   },
   mounted () {
+    this.getUser()
     this.getCashRequestBalance()
     this.$notify({
       message: '为确保您个人资金安全，请及时修改密码',
@@ -193,16 +214,16 @@ export default {
       this.number = ''
       this.getCashRequestBalance()
     },
-    // 扫一扫
-    equipment () {
+    // 设备按钮
+    onEquipment () {
       this.$router.push('equipmentList')
     },
     // 修改密码
-    forget () {
-      this.$router.push('withdrawEditPassword')
+    onForget () {
+      this.$router.push({name:'withdrawEditPassword'})
     },
     // 退出登陆
-    logout () {
+    onLogout () {
       this.$store.dispatch('user/FedLogOut')
       WeixinJSBridge.call('closeWindow');
     },
@@ -213,8 +234,44 @@ export default {
         this.money = data.data
       }
     },
+    //发送验证码
+    async getCodeNum () {
+      // if (!this.userAccount) {
+      //   this.$toast('手机号码不能为空')
+      //   return;
+      // }
+      // if (!validatePhone(this.userAccount)) {
+      //   this.$toast('请输入正确的手机号码')
+      //   return;
+      // }
+      this.disabled2 = true
+      try {
+        const { data } = await sendSms({
+          phone: this.userAccount
+        });
+        if (data.code == 1) {
+          this.$refs.cut.start()
+          this.$toast('验证码发送成功！')
+        } else {
+          this.$toast(data.msg)
+          this.$refs.cut.reset()
+          this.disabled2 = false
+        }
+      } catch (error) {
+        console.log(error)
+        this.$refs.cut.reset()
+        this.disabled2 = false
+      }
+    },
+    // 获取当前账户
+    async getUser () {
+      const { data } = await getUserInfo()
+      if (data.code == 1) {
+        this.userAccount = data.data.userAccount
+      }
+    },
     // 提现按钮
-    submit () {
+    onSubmit () {
       if (this.disabled) {
         return;
       }
@@ -230,28 +287,29 @@ export default {
         this.$toast('提现金额不能超过余额')
         return
       }
-      this.show1 = true
+      this.show2 = true
     },
     // 提现
-    async withdraw () {
+    async onWithdraw () {
       this.disabled = true
       try {
         const { data } = await withdraw({
           bankId: this.bankId,
           money: this.number,
           orderType: this.active,
+          phoneCode: this.phoneCode,
         })
         if (data.code == 1) {
           this.disabled = false
-          this.show1 = false
+          this.show2 = false
           this.show = true
         } else {
           this.disabled = false
-          this.show1 = false
+          this.show2 = false
         }
       } catch (error) {
         this.disabled = false
-        this.show1 = false
+        this.show2 = false
       }
     }
   }
@@ -313,15 +371,15 @@ export default {
 
 .btn-g {
   width: 100px;
-  height: 40px;
-  line-height: 40px;
+  height: 36px;
+  line-height: 36px;
   text-align: center;
   font-size: 16px;
   background: #c9c9c9;
   color: #666;
   border-radius: 50px;
   margin: 0 12px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .btn-g-1 {
@@ -373,18 +431,12 @@ export default {
   margin-left: 5%;
   margin-top: 15%;
   border-radius: 8px;
-  padding: 20px 0 30px;
+  padding: 20px 0 20px;
 }
 
 .logout {
   position: absolute;
   right: 10px;
-  top: 20px;
-}
-
-.equipment{
-  position: absolute;
-  right: 90px;
   top: 20px;
 }
 
@@ -401,6 +453,12 @@ export default {
 .forget {
   position: absolute;
   right: 50px;
+  top: 20px;
+}
+
+.equipment{
+  position: absolute;
+  right: 90px;
   top: 20px;
 }
 </style>
