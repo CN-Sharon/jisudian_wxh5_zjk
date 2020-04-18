@@ -23,29 +23,33 @@ export default {
       //   mask: true,
       //   message: '加载中...'
       // });
-      this.getSign().then(sdk => {
-        this.$wx.config({
-          debug,
-          ...sdk,
-          jsApiList: [
-            'updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareTimeline', 'onMenuShareAppMessage',
-            'onMenuShareWeibo', 'onMenuShareQZone', 'startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice',
-            'pauseVoice', 'stopVoice', 'onVoicePlayEnd', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage',
-            'uploadImage', 'downloadImage', 'translateVoice', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu',
-            'showOptionMenu', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'closeWindow',
-            'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'
-          ]
+      return new Promise((resolve,reject) => {
+        this.getSign().then(sdk => {
+          this.$wx.config({
+            debug,
+            ...sdk,
+            jsApiList: [
+              'updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareTimeline', 'onMenuShareAppMessage',
+              'onMenuShareWeibo', 'onMenuShareQZone', 'startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice',
+              'pauseVoice', 'stopVoice', 'onVoicePlayEnd', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage',
+              'uploadImage', 'downloadImage', 'translateVoice', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu',
+              'showOptionMenu', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'closeWindow',
+              'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'
+            ]
+          })
+          this.$wx.ready(() => {
+            this.$toast.clear()
+            ready && ready()
+            resolve()
+          })
+          this.$wx.error(err => {
+            console.log("wx.error======",err);
+            this.$toast.clear()
+            error && error(err)
+            reject()
+          })
         })
-        this.$wx.ready(() => {
-          this.$toast.clear()
-          ready && ready()
-        })
-        this.$wx.error(err => {
-          console.log("wx.error==111====",err);
-          this.$toast.clear()
-          error && error(err)
-        })
-      })
+    })
     }
   }
 }

@@ -140,6 +140,9 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   console.log("after router !!!---",to.fullPath)
   to.meta.wxsdk && updateUrl(to.fullPath)
+  // .then(() => {
+  //   initWxConfig()
+  // })
   // const { wxsdk } = to.meta
   // if (wxsdk) {
   //  updateUrl().then(() => {

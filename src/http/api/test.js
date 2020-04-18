@@ -109,3 +109,11 @@ export function testList (params) {
     params
   })
 }
+// 解绑
+export function unbindSn (params) {
+  return request({
+    url: `${defaultPath}/api/iotDevice/admin/unbindSn`,
+    method: 'get',
+    params
+  })
+}

@@ -27,6 +27,10 @@
                 <img class="wid40 rebind-img" src="@/assets/scan.png" alt="">
                 <p class="p2 mg0 ft15 text-center">重新绑定</p>
               </div>
+              <div class="unbind" @click="onUnBindSn">
+                <img class="wid40 unbind-img" src="@/assets/btn18.png" alt="">
+                <p class="p2 mg0 ft15 text-center">解绑</p>
+              </div>
             </main>
             <div class="mg4-y ft16 lh40 pd10-x flex-between">
               <span>槽口</span>
@@ -107,7 +111,8 @@
   </div>
 </template>
 <script>
-  import { scanQR, popOne, popAll, rebootDevice,bindSn } from '@/http/api/test'
+  import { scanQR, popOne, popAll, rebootDevice,bindSn,unbindSn } from '@/http/api/test';
+  import initWxConfig from '@/mixins/getSign';
   export default {
     components: {
     },
@@ -117,7 +122,7 @@
         show:false,
         show1:true,
         show2: false,
-        showLoading:true,
+        showLoading: true,
         equipmentNumber:'',
         notes:{},
         eqList:[],
@@ -126,57 +131,24 @@
           { name: '是', type: 1, },
           { name: '否', type: 0, },
         ],
-        // notes:{
-        //   "checkNum": "E5",  // 校验位
-        //   "data": [],
-        //   "deviceName": "865192044327749",   //设备iot名称
-        //   "hardVersion": 1,   //机柜硬件版本
-        //   "messageLength": 131,   // 消息长度
-        //   "messageType": 144,  // 消息类型
-        //   "requestHead": 169,  // 请求头
-        //   "signal": 24,   //  4G信号强度
-        //   "softVersion": 2, //机柜软件版本
-        //   "temp": 100,  //  机柜内温度
-        //   "undefined0": 0,  //
-        //   "undefined2": 0  //
-        // },
-        // eqList:[
-        //     {
-        //         "batterySn": 0,   // 充电宝SN序列号
-        //         "electric": 0,   //  充电宝剩余电量（电量百分比，十进制 0-100）
-        //         "electricCurrent": 0,   // 输出电流（暂时不用）
-        //         "hardVersion": 0,   // 充电宝硬件版本
-        //         "index": 1,   // 充电宝孔位索引
-        //         "softVersion": 0,   // 充电宝软件版本
-        //         "state": 0,   // 孔位状态    0.空仓  1.正常
-        //         "temp": 0,   // 电池温度（-15 ~ 50）
-        //         "undefined0": 0,   //
-        //         "undefined1": 0,   //
-        //         "undefined2": 0,   //
-        //         "voltage": 20   // 电池电压（例：38，实际上是实际电压的10倍，取值范围为（30~42），其他值表示电池异常）
-        //     },
-        //     {
-        //         "batterySn": 0,
-        //         "electric": 0,
-        //         "electricCurrent": 0,
-        //         "hardVersion": 0,
-        //         "index": 2,
-        //         "softVersion": 0,
-        //         "state": 1,
-        //         "temp": 0,
-        //         "undefined0": 0,
-        //         "undefined1": 0,
-        //         "undefined2": 0,
-        //         "voltage": 20
-        //     },
-        // ],
       }
 		},
-    created() {
-      // todo--eq:
-      // this.equipmentNumber = 'JSD0000002';
-      this.equipmentNumber = this.$route.params.equipmentNumber;
-      this.getDetail();
+    mixins: [initWxConfig],
+    mounted() {
+      // 调用初始化函数地图
+      this.$nextTick(() => {
+        this.initWxConfig()
+        .then(() => {
+          console.log('initWxConfig finish');
+          this.showLoading = false;
+          this.equipmentNumber = this.$route.params.equipmentNumber;
+          // this.equipmentNumber = 'JSD020820010001748';
+          this.getDetail();
+        }).catch(() => {
+          console.log('initWxConfig error');
+          this.showLoading = false;
+        })
+      })
     },
     computed: {
       userInfo () {
@@ -281,8 +253,21 @@
           console.log(data.data)
         }
       },
+      // 解绑
+      async onUnBindSn(){
+        const {data} = await unbindSn({
+          deviceName:this.notes.deviceName,
+        })
+        if(data.code === 1){
+          this.$toast('设备解绑成功！')
+          setTimeout(() => {
+            this.$router.go(-1);
+          },1200);
+        }
+      },
       // 重新绑定
       async onBindSn(){
+        console.log("点击重新绑定")
         this.$wx.scanQRCode({
           needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
@@ -359,14 +344,20 @@ p
 .restart
 	position absolute
 	bottom 30px
-	right 80px
+	right 130px
 .rebind
+	position absolute
+	bottom 30px
+	right 60px
+.unbind
 	position absolute
 	bottom 30px
 	right 10px
 .rebind-img
   position relative
   left 10px
+.unbind-img
+  position relative
 .p2
   color #1597db
 .header
